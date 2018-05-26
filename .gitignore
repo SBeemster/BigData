@@ -25,6 +25,9 @@ hs_err_pid*
 # CSV folder
 csv/
 
+# Node Package folder
+node_modules/
+
 # Eclips specific
 .metadata
 bin/

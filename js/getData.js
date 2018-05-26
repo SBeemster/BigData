@@ -3,6 +3,7 @@
 // Settings
 const database = "rdw";
 const targetCollection = "sourceData";
+const documentLimit = 9999;
 
 // Packages
 const http = require("http");
@@ -37,9 +38,12 @@ function cleanUp() {
 function get() {
     let deferred = Q.defer();
 
+    let targetPath = "/resource/m9d7-ebf2.json"
+    targetPath += documentLimit > 0 ? `?$limit=${documentLimit}` : "";
+
     http.get({
         host: "opendata.rdw.nl",
-        path: "/resource/m9d7-ebf2.json?$limit=9999",
+        path: targetPath,
     }, res => {
         const { statusCode } = res;
 

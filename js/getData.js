@@ -3,7 +3,7 @@
 // Settings
 const database = "rdw";
 const targetCollection = "sourceData";
-const documentLimit = 9999;
+const documentLimit = 99999;
 
 // Packages
 const http = require("http");

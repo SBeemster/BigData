@@ -3,7 +3,7 @@
 // Settings
 const database = "rdw";
 const sourceCollection = "sourceData";
-const targetCollection = "toelating_per_merk_per_jaar";
+const targetCollection = "vermogen_per_kleur";
 
 // Packages
 const Q = require("q");
@@ -13,19 +13,30 @@ const db = mongojs(database, [sourceCollection, targetCollection]);
 // Workflow
 cleanUp()
     .then(mapReduce)
-    //.then(find)
-    //.then(result => console.log(result))
     .then(dbClose)
     .catch(error => console.error(`Error: ${error.message}`));
 
 // Data Workers
 const mapper = function () {
-    let date = new Date(this.datum_eerste_toelating);
-    emit({ year: date.getFullYear(), merk: this.merk }, 1);
+    emit({ kleur: this.eerste_kleur, vermogen: this.vermogen_massarijklaar }, 1);
 };
 
 const reducer = function (key, value) {
     return Array.sum(value);
+};
+
+const query = {
+    voertuigsoort: {
+        $eq: "Personenauto"
+    },
+    eerste_kleur: { 
+        $exists: true, 
+        $ne: "Niet geregistreerd"
+    },
+    vermogen_massarijklaar: {
+        $exists: true,
+        $ne: "0"
+    }
 };
 
 // Functions
@@ -51,7 +62,8 @@ function mapReduce() {
         mapper,
         reducer,
         {
-            out: targetCollection
+            out: targetCollection,
+            query, query
         },
         function (error, value) {
             if (error) {
